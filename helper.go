@@ -12,22 +12,22 @@ func (m model) RecomputeEmptyTiles() {
 	m.emptyTiles = emptyTiles
 }
 
-func (m model) DownNonZeroIndex(currentRow, currentCol int) (int, int) {
+func (m model) DownNonZeroIndex(currentRow, currentCol int) int {
 	for row := currentRow + 1; row < 4; row++ {
 		if m.board[row][currentCol] != 0 {
-			return row, currentCol
+			return row
 		}
 	}
 	// The below column is empty
-	return -1, -1
+	return -1
 }
 
-func (m model) UpNonZeroIndex(currentRow, currentCol int) (int, int) {
+func (m model) UpNonZeroIndex(currentRow, currentCol int) int {
 	for row := currentRow - 1; row >= 0; row-- {
 		if m.board[row][currentCol] != 0 {
-			return row, currentCol
+			return row
 		}
 	}
 	// The above column is empty
-	return -1, -1
+	return -1
 }

@@ -26,24 +26,35 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "down":
 			doesSomethingChange := false
+
 			for i := 2; i >= 0; i-- {
 				for j := 0; j < 4; j++ {
-					idx1, idx2 := m.DownNonZeroIndex(i, j)
-					if idx1 == -1 && idx2 == -1 {
-						doesSomethingChange = true
-						m.board[3][j] = m.board[i][j]
-						m.board[i][j] = 0
-					} else {
-						if m.board[idx1][idx2] == m.board[i][j] {
-							doesSomethingChange = true
-							m.board[idx1][idx2] += m.board[i][j]
+
+					if m.board[i][j] != 0 {
+						var newRowIdx int
+						var newVal int = m.board[i][j]
+						idx := m.DownNonZeroIndex(i, j)
+
+						if idx == -1 {
+							newRowIdx = 3
+						} else {
+							if m.board[idx][j] == m.board[i][j] {
+								newRowIdx = idx
+								newVal *= 2
+							} else {
+								newRowIdx = idx - 1
+							}
+						}
+
+						if newRowIdx != i {
+							m.board[newRowIdx][j] = newVal
 							m.board[i][j] = 0
+							doesSomethingChange = true
 						}
 					}
 				}
 			}
 			if doesSomethingChange {
-				print("I occour")
 				m.RecomputeEmptyTiles()
 
 				numOfEmpTiles := len(m.emptyTiles)
@@ -63,17 +74,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			doesSomethingChange := false
 			for i := 1; i < 4; i++ {
 				for j := 0; j < 4; j++ {
-					idx1, idx2 := m.UpNonZeroIndex(i, j)
-					if idx1 == -1 && idx2 == -1 {
-						doesSomethingChange = true
-						m.board[0][j] = m.board[i][j]
-						m.board[i][j] = 0
+					idx := m.UpNonZeroIndex(i, j)
+					var newRowIdx int
+					var newVal int = m.board[i][j]
+
+					if idx == -1 {
+						newRowIdx = 0
 					} else {
-						if m.board[idx1][idx2] == m.board[i][j] {
-							doesSomethingChange = true
-							m.board[idx1][idx2] += m.board[i][j]
-							m.board[i][j] = 0
+						if m.board[idx][j] == m.board[i][j] {
+							newRowIdx = idx
+							newVal *= 2
+						} else {
+							newRowIdx = idx - 1
 						}
+					}
+					if newRowIdx != i {
+						m.board[newRowIdx][j] = newVal
+						m.board[i][j] = 0
+						doesSomethingChange = true
 					}
 				}
 			}
@@ -138,6 +156,8 @@ func initialModel() model {
 	board := [4][4]int{}
 	x1, y1 := randomPosition()
 	x2, y2 := randomPosition()
+	// x1, y1 := 2, 0
+	// x2, y2 := 3, 0
 
 	board[x1][y1] = 2
 	board[x2][y2] = 2
