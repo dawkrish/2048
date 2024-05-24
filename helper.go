@@ -1,6 +1,12 @@
 package main
 
-func (m model) RecomputeEmptyTiles() {
+import "math/rand"
+
+func randomPosition() (int, int) {
+	return rand.Intn(4), rand.Intn(4)
+}
+
+func (m model) RecomputeEmptyTiles() [][2]int {
 	emptyTiles := [][2]int{}
 	for i := 0; i < 4; i++ {
 		for j := 0; j < 4; j++ {
@@ -9,7 +15,7 @@ func (m model) RecomputeEmptyTiles() {
 			}
 		}
 	}
-	m.emptyTiles = emptyTiles
+	return emptyTiles
 }
 
 func (m model) DownNonZeroIndex(currentRow, currentCol int) int {
@@ -29,5 +35,25 @@ func (m model) UpNonZeroIndex(currentRow, currentCol int) int {
 		}
 	}
 	// The above column is empty
+	return -1
+}
+
+func (m model) LeftNonZeroIndex(currentRow, currentCol int) int {
+	for col := currentCol - 1; col >= 0; col-- {
+		if m.board[currentRow][col] != 0 {
+			return col
+		}
+	}
+
+	return -1
+}
+
+func (m model) RightNonZeroIndex(currentRow, currentCol int) int {
+	for col := currentCol + 1; col < 4; col++ {
+		if m.board[currentRow][col] != 0 {
+			return col
+		}
+	}
+
 	return -1
 }
